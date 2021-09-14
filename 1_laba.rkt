@@ -33,3 +33,25 @@
 
 
 
+;;;;;;;;;;;;;;;;; EXTRA TASK ;;;;;;;;;;;;;;;;;;;;;;
+
+(define (prog-day x)
+  (cond ((< x 2002) (display "Не праздновался"))
+        ((< x 2009)
+         (if (or (and (= (remainder x 4) 0) (not (= (remainder x 100) 0))) (= (remainder x 400) 0))
+             (display "Праздновался неофициально 12 сентября")
+             (display "Праздновался неофициально 13 сентября")
+             ))
+        ((< x 2022)
+         (if (or (and (= (remainder x 4) 0) (not (= (remainder x 100) 0))) (= (remainder x 400) 0))
+             (display "Праздновался официально 12 сентября")
+             (display "Праздновался официально 13 сентября")
+             ))
+        (else
+         (if (or (and (= (remainder x 4) 0) (not (= (remainder x 100) 0))) (= (remainder x 400) 0))
+             (display "Будет праздноваться официально 12 сентября")
+             (display "Будет праздноваться официально 13 сентября")
+             )))
+  )
+
+
