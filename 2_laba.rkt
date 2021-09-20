@@ -22,3 +22,15 @@
 (display (delete odd? '(1 2 3 4))) (newline)
 (display (delete odd? '(1 3 5 7))) (newline)
 (newline)
+
+(define (iterate f x n)
+  (if (= n 0)
+      '()
+      (cons x (iterate f (f x) (- n 1)))))
+
+(display "#3") (newline)
+(display (iterate (lambda (x) (* 2 x)) 1 6)) (newline)
+(display (iterate (lambda (x) (* 2 x)) 1 1)) (newline)
+(display (iterate (lambda (x) (* 2 x)) 1 0)) (newline)
+(newline)
+
