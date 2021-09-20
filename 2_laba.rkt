@@ -4,7 +4,21 @@
     (if (equal? x (car xs))
         (+ (count x (cdr xs)) 1)
         (count x (cdr xs)))))
-
+(display "#1") (newline)
 (display (count 'a '(a b c d))) (newline)
 (display (count 'a '(a a a a))) (newline)
 (display (count 'a '())) (newline)
+(newline)
+ 
+(define (delete pred? xs)
+  (if (null? xs)
+      (list)
+      (if (pred? (car xs))
+          (delete pred? (cdr xs))
+          (cons (car xs) (delete pred? (cdr xs))))))
+
+(display "#2") (newline)
+(display (delete even? '(1 2 3 4))) (newline)
+(display (delete odd? '(1 2 3 4))) (newline)
+(display (delete odd? '(1 3 5 7))) (newline)
+(newline)
