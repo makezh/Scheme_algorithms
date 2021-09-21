@@ -83,11 +83,9 @@
 
 (define (o . xs)
   (lambda (x)
-    (define (f xs x)
-      (if (null? xs)
-          x
-          (f (cdr xs) ((car xs) x))))
-    (f (reverse xs) x)))
+    (if (null? xs)
+        x
+        ((car xs) ((apply o (cdr xs)) x)  ))))
 
 (display "#6") (newline)
 (display ((o f g h) 1)) (newline)
