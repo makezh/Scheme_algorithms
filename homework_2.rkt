@@ -73,6 +73,20 @@
 (display "(list->set '(1 1 1 2 3)) -> ")
 (list->set '(1 1 1 2 3))
 
+;------------------------
+
+(define (set? xs)
+  (cond
+    ((null? xs) #t)
+    ((my-element? (car xs) (cdr xs)) #f)
+    (else (set? (cdr xs)))))
+
+(display "(set? '(1 2 3)) -> ")
+(set? '(1 2 3))
+(display "(set? '(1 2 3 3)) -> ")
+(set? '(1 2 3 3))
+(display "(set? '()) -> ")
+(set? '()) 
 
 ;=========================
 
