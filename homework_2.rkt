@@ -91,10 +91,42 @@
 ;------------------------
 
 (define (union xs ys)
-  (if (null? ys)
-      xs))
+  (cond
+    ((null? xs) ys)
+    ((my-element? (car xs) ys) (union (cdr xs) ys))
+    (else (cons (car xs) (union (cdr xs) ys)))))
 
-  
+(display "(union '(1 2 3 5 6) '(4 5 6 7)) -> ")
+(union '(1 2 3 5 6) '(4 5 6 7))
+
+;------------------------
+
+(define (intersection xs ys)
+  (cond
+    ((or (null? xs) (null? ys)) '())
+    ((my-element? (car xs) ys) (cons (car xs) (intersection (cdr xs) ys)))
+    (else (intersection (cdr xs) ys))))
+
+(display "(intersection '(1 2 3 4 7 8) '(2 3 4 5 6)) -> ")
+(intersection '(1 2 3 4 7 8) '(2 3 4 5 6))
+
+;------------------------
+
+(define (difference xs ys)
+  (cond
+    ((null? xs) '())
+    ((my-element? (car xs) ys) (difference (cdr xs) ys))
+    (else (cons (car xs) (difference (cdr xs) ys)))))
+
+(display "(difference '(1 2 3 4 5) '(2 3)) -> ")
+(difference '(1 2 3 4 5) '(2 3))
+
+;------------------------
+
+(define (symmetric-difference xs ys)
+  (cond
+    ((null? xs) ys)))
+
 ;=========================
 
 ;#5
