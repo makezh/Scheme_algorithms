@@ -124,8 +124,20 @@
 ;------------------------
 
 (define (symmetric-difference xs ys)
+  (union (difference xs ys) (difference ys xs)))
+  ;(cond
+    ;((null? xs) ys)
+    ;((my-element? (car xs) ys) (symmetric-difference (cdr xs) (cdr ys)))
+    ;(else (cons (car xs) (symmetric-difference (cdr xs) ys)))))
+
+(display "(symmetric-difference '(1 2 3 4) '(3 4 5 6)) -> ")
+(symmetric-difference '(1 2 3 4) '(3 4 5 6))
+
+;------------------------
+
+(define (set-eq? xs ys)
   (cond
-    ((null? xs) ys)))
+    ((and (null? xs) (null? ys)) #t)))
 
 ;=========================
 
