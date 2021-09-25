@@ -16,11 +16,11 @@
   (if (null? xs)
       '()
       (if (list? (car xs))
-          (append (car xs) (my-flatten (cdr xs)))
+          (append (my-flatten (car xs)) (my-flatten (cdr xs)))
           (cons (car xs) (my-flatten (cdr xs))))))
 
-(display "(my-flatten '(1 2 (3 4) 5 (7 8 9 10) (12))) -> ")
-(my-flatten '(1 2 (3 4) 5 (7 8 9 10) (12)) )
+(display "(my-flatten '(1 2 (3 (4)) 5 (7 (8 9) 10) (12))) -> ")
+(my-flatten '(1 2 (3 (4)) 5 (7 (8 9) 10) (12)) )
 
 ;------------------------
 
@@ -137,8 +137,9 @@
 
 (define (set-eq? xs ys)
   (cond
-    ((and (null? xs) (null? ys)) #t)))
-
+    ((and (null? xs) (null? ys)) #t)
+    ((and (not (null? xs)) (null? ys) #f))
+    ((and (not (null? ys)) (null? xs) #f))))
 ;=========================
 
 ;#5
@@ -151,6 +152,6 @@
   (lambda (x)
     (if (null? xs)
         x
-        ((car xs) ((apply o (cdr xs)) x)  ))))
+        ((car xs) ((apply o (cdr xs)) x)))))
 
 
