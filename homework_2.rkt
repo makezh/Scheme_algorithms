@@ -140,6 +140,9 @@
     ((and (null? xs) (null? ys)) #t)
     ((and (not (null? xs)) (null? ys) #f))
     ((and (not (null? ys)) (null? xs) #f))))
+
+
+(newline)
 ;=========================
 
 ;#5
@@ -154,4 +157,14 @@
         x
         ((car xs) ((apply o (cdr xs)) x)))))
 
+
+(display "#5") (newline)
+(display "((o f g h) 1) -> ")
+((o f g h) 1)
+(display "((o f g) 1) -> ")
+((o f g) 1)
+(display "((o h) 1) -> ")
+((o h) 1)
+(display "((o) 1) -> ")
+((o) 1)       
 
