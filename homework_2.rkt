@@ -51,11 +51,29 @@
 
 ;------------------------
 
-;(define (my-fold-left op xs))
+(define (my-fold-left op xs)
+  (if (<= (length xs) 1) 
+      xs
+      (my-fold-left op (cons (op (car xs) (cadr xs)) (cddr xs)))))
+
+(display "(my-fold-left quotient '(16 2 2 2 2)) -> ")
+(my-fold-left quotient '(16 2 2 2 2))
+(display "(my-fold-left quotient '(1)) -> ")
+(my-fold-left quotient '(1))
+(display "(my-fold-left expt '(2 2 3)) -> ")
+(my-fold-left expt '(2 2 3))
 
 ;------------------------
 
-;(define (my-fold-right op xs))
+(define (my-fold-right op xs)
+  (if (<= (length xs) 1)
+      (car xs)
+      (op (car xs) (my-fold-right op (cdr xs)))))
+
+(display "(my-fold-right expt '(2 3 4)) -> ")
+(my-fold-right expt '(2 3 4))
+(display "(my-fold-right expt '(2)) -> ")
+(my-fold-right expt '(2))
 
 (newline)
 ;=========================
@@ -135,12 +153,15 @@
 
 ;------------------------
 
-(define (set-eq? xs ys)
-  (cond
-    ((and (null? xs) (null? ys)) #t)
-    ((and (not (null? xs)) (null? ys) #f))
-    ((and (not (null? ys)) (null? xs) #f))))
 
+(define (set-eq? xs ys)
+  (not (or (not (and (set? xs) (set? ys) (equal? (symmetric-difference xs ys) '()))) #f)))
+
+
+(display "(set-eq? '(1 2 3) '(2 3 4 1)) -> ")
+(set-eq? '(1 2 3) '(2 3 4 1))
+(display "(set-eq? '(1 2 3) '(2 3 1)) -> ")
+(set-eq? '(1 2 3) '(2 3 1))
 
 (newline)
 ;=========================
@@ -167,4 +188,3 @@
 ((o h) 1)
 (display "((o) 1) -> ")
 ((o) 1)       
-
