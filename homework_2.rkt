@@ -153,7 +153,6 @@
 
 ;------------------------
 
-
 (define (set-eq? xs ys)
   (not (or (not (and (set? xs) (set? ys) (equal? (symmetric-difference xs ys) '()))) #f)))
 
