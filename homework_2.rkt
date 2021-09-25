@@ -156,7 +156,6 @@
 (define (set-eq? xs ys)
   (not (or (not (and (set? xs) (set? ys) (equal? (symmetric-difference xs ys) '()))) #f)))
 
-
 (display "(set-eq? '(1 2 3) '(2 3 4 1)) -> ")
 (set-eq? '(1 2 3) '(2 3 4 1))
 (display "(set-eq? '(1 2 3) '(2 3 1)) -> ")
