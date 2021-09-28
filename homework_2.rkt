@@ -21,6 +21,8 @@
 
 (display "(my-flatten '(1 2 (3 (4)) 5 (7 (8 9) 10) (12))) -> ")
 (my-flatten '(1 2 (3 (4)) 5 (7 (8 9) 10) (12)) )
+(display "(my-flatten '((a b) c d)) -> ")
+(my-flatten '((a b) c d))
 
 ;------------------------
 
@@ -88,8 +90,8 @@
           (cons (car xs) (list->set (cdr xs))))))
 
 (display "#2") (newline)
-(display "(list->set '(1 1 1 2 3)) -> ")
-(list->set '(1 1 1 2 3))
+(display "(list->set '(1 1 1 2 2 2 2 3 3)) -> ")
+(list->set '(1 1 1 2 2 2 2 3 3))
 
 ;------------------------
 
@@ -143,10 +145,6 @@
 
 (define (symmetric-difference xs ys)
   (union (difference xs ys) (difference ys xs)))
-  ;(cond
-    ;((null? xs) ys)
-    ;((my-element? (car xs) ys) (symmetric-difference (cdr xs) (cdr ys)))
-    ;(else (cons (car xs) (symmetric-difference (cdr xs) ys)))))
 
 (display "(symmetric-difference '(1 2 3 4) '(3 4 5 6)) -> ")
 (symmetric-difference '(1 2 3 4) '(3 4 5 6))
@@ -154,12 +152,16 @@
 ;------------------------
 
 (define (set-eq? xs ys)
-  (not (or (not (and (set? xs) (set? ys) (equal? (symmetric-difference xs ys) '()))) #f)))
+  (and (set? xs) (set? ys) (equal? (symmetric-difference xs ys) '())))
 
 (display "(set-eq? '(1 2 3) '(2 3 4 1)) -> ")
 (set-eq? '(1 2 3) '(2 3 4 1))
 (display "(set-eq? '(1 2 3) '(2 3 1)) -> ")
 (set-eq? '(1 2 3) '(2 3 1))
+(display "(set-eq? '(a b c) '(a b c d)) -> ")
+(set-eq? '(a b c) '(a b c d))
+(display "(set-eq? '(a d b c) '(a b c d)) -> ")
+(set-eq? '(a d b c) '(a b c d))
 
 (newline)
 ;=========================
