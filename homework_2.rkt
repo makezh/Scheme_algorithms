@@ -166,6 +166,100 @@
 (newline)
 ;=========================
 
+;#3
+
+(define (string-trim-left s)
+  (if (char-whitespace? (string-ref s 0)) 
+      (string-trim-left (substring s 1))
+      s))
+
+(display "#3\n")
+(display "(string-trim-left  \"\\t\\tabc def\") -> ")
+(string-trim-left  "\t\tabc def")
+(display "(string-trim-left  \"   \\t\\n\\tabc def\") -> ")
+(string-trim-left  "\t\n\tabc def")
+
+;------------------------
+
+(define (string-trim-right s)
+  (if (char-whitespace? (string-ref s (- (string-length s) 1)))
+      (string-trim-right (substring s 0 (- (string-length s) 1)))
+      s))
+
+(display "(string-trim-right \"abc def\\t\\t\\t\\t\\t\\t\\t\\t   \") -> ")
+(string-trim-right "abc def\t\t\t\t\t\t\t\t   ") 
+
+;------------------------
+
+(define (string-trim s)
+  (string-trim-left (string-trim-right s)))
+
+(display "(string-trim \"    \\t       abc def \\n       \") -> ")
+(string-trim "    \t       abc def \n       ")
+
+;------------------------
+
+(define (string-prefix? a b)
+  (cond
+    ((> (string-length a) (string-length b)) #f)
+    ((equal? (substring b 0 (string-length a)) a) #t)
+    (else #f)))
+
+(display "(string-prefix? \"abc\" \"abcdef\") -> ")
+(string-prefix? "abc" "abcdef")
+(display "(string-prefix? \"abcdef\" \"abc\") -> ")
+(string-prefix? "abcdef" "abc")
+(display "(string-prefix? \"bcde\" \"abcdef\") -> ")
+(string-prefix? "bcde" "abcdef")
+
+;------------------------
+
+(define (string-suffix? a b)
+  (cond
+    ((> (string-length a) (string-length b)) #f)
+    ((equal? (substring b (- (string-length b) (string-length a))) a) #t)
+    (else #f)))
+
+(display "(string-suffix? \"def\" \"abcdef\") -> ")
+(string-suffix? "def" "abcdef")
+(display "(string-suffix? \"bcd\" \"abcdef\") -> ")
+(string-suffix? "bcd" "abcdef")
+
+;------------------------
+
+(define (string-infix? a b)
+  (cond
+    ((> (string-length a) (string-length b)) #f)
+    ((string-prefix? a b) #t)
+    (else (string-infix? a (substring b 1)))))
+
+(display "(string-infix? \"def\" \"abcdefgh\") -> ")
+(string-infix? "def" "abcdefgh")
+(display "(string-infix? \"abc\" \"abcdefgh\") -> ")
+(string-infix? "abc" "abcdefgh")
+(display "(string-infix? \"fgh\" \"abcdefgh\") -> ")
+(string-infix? "fgh" "abcdefgh")
+(display "(string-infix? \"ijk\" \"abcdefgh\") -> ")
+(string-infix? "ijk" "abcdefgh")
+(display "(string-infix? \"bcd\" \"abc\") -> ")
+(string-infix? "bcd" "abc")
+
+;------------------------
+
+(define (string-split s sep)
+  (cond
+    ((null? s) (string))
+    ((> (string-length sep) (string-length s)) s)
+    ((equal? sep (substring s 0 (string-length sep))) (string-split (substring s (string-length sep)) sep))
+    (else (string-append (string (string-ref s 0)) (string-split (substring s 1) sep)))))
+
+(display "(string-split \"x;y;z\" \";\") -> ")
+(string-split "x;y;z" ";")
+(display "(string-split \"x-->y-->z\" \"-->\") -> ")
+(string-split "x-->y-->z" "-->")  
+
+(newline)
+;=========================
 ;#5
 
 (define (f x) (+ x 2))
