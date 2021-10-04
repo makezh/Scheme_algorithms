@@ -248,10 +248,10 @@
 
 (define (string-split s sep)
   (cond
-    ((null? s) (string))
-    ((> (string-length sep) (string-length s)) s)
+    ((= (string-length s) 0) (list))
+    ((> (string-length sep) (string-length s)) (append (list (string (string-ref s 0))) (string-split (substring s 1) sep)))
     ((equal? sep (substring s 0 (string-length sep))) (string-split (substring s (string-length sep)) sep))
-    (else (string-append (string (string-ref s 0)) (string-split (substring s 1) sep)))))
+    (else (append (list (string (string-ref s 0))) (string-split (substring s 1) sep)))))
 
 (display "(string-split \"x;y;z\" \";\") -> ")
 (string-split "x;y;z" ";")
