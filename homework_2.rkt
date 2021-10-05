@@ -254,9 +254,9 @@
 
 (define (string-split s sep)
   (cond
-  ((= (string-length s) 0) (list))
-  ((string-prefix? sep s) (string-split (substring s (string-length sep)) sep))
-  (else (cons (add-elem s sep) (string-split (substring s (string-length (add-elem s sep))) sep)))))
+    ((= (string-length s) 0) (list))
+    ((string-prefix? sep s) (string-split (substring s (string-length sep)) sep))
+    (else (cons (add-elem s sep) (string-split (substring s (string-length (add-elem s sep))) sep)))))
 
 (display "(string-split \"x;y;z\" \";\") -> ")
 (string-split "x;y;z" ";")
