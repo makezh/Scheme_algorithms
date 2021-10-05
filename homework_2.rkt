@@ -247,9 +247,10 @@
 ;------------------------
 
 (define (add-elem s sep)
-  (if (or (= (string-length s) 0) (string-prefix? sep s))
-      (string)
-      (string-append (make-string 1 (string-ref s 0)) (add-elem (substring s 1) sep))))
+  (cond
+    ((= (string-length s) 0) (string))
+    ((string-prefix? sep s) (string))
+    (else (string-append (make-string 1 (string-ref s 0)) (add-elem (substring s 1) sep)))))
 
 (define (string-split s sep)
   (cond
