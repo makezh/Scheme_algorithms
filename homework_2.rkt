@@ -246,17 +246,30 @@
 
 ;------------------------
 
+(define (add-elem s sep)
+  (if (or (= (string-length s) 0) (string-prefix? sep s))
+      (string)
+      (string-append (make-string 1 (string-ref s 0)) (add-elem (substring s 1) sep))))
+
 (define (string-split s sep)
   (cond
-    ((= (string-length s) 0) (list))
-    ((> (string-length sep) (string-length s)) (append (list (string (string-ref s 0))) (string-split (substring s 1) sep)))
-    ((equal? sep (substring s 0 (string-length sep))) (string-split (substring s (string-length sep)) sep))
-    (else (append (list (string (string-ref s 0))) (string-split (substring s 1) sep)))))
+  ((= (string-length s) 0) (list))
+  ((string-prefix? sep s) (string-split (substring s (string-length sep)) sep))
+  (else (cons (add-elem s sep) (string-split (substring s (string-length (add-elem s sep))) sep)))))
 
 (display "(string-split \"x;y;z\" \";\") -> ")
 (string-split "x;y;z" ";")
 (display "(string-split \"x-->y-->z\" \"-->\") -> ")
-(string-split "x-->y-->z" "-->")  
+(string-split "x-->y-->z" "-->")
+(display "(string-split \"abc;def;ghi;\" \";\") -> ")
+(string-split "abc;def;ghi;" ";")
+
+(newline)
+;=========================
+
+;#4
+
+
 
 (newline)
 ;=========================
