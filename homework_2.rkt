@@ -270,6 +270,59 @@
 
 ;#4
 
+(define (make-multi-vector sizes . fill) 
+  (cons
+   sizes
+   (list (if (= (length fill) 1) 
+             (make-vector (apply * sizes) (car fill))
+             (make-vector (apply * sizes))))))
+
+(display "#4\n")
+(define m (make-multi-vector '(1 2 3) 1))
+(display "m -> ") (display m) (newline)
+
+;------------------------
+
+(define (multi-vector? mv)
+  (and (list? mv) (list? (car mv)) (vector? (cadr mv))))
+
+
+(display "(multi-vector? m) -> ")
+(multi-vector? m)
+(display "(multi-vector? #(1 1 1 1)) -> ")
+(multi-vector? #(1 1 1 1))
+;(display (cadr m))
+
+;------------------------
+
+(define (position-in-vector sizes indices)
+  (if (null? (cdr sizes))
+      (car sizes)
+      (+ (* (car indices) (apply * (cdr sizes))) (position-in-vector (cdr sizes) (cdr indices)))))
+
+;(position-in-vector '(2 5) '(0 0))
+
+;------------------------
+
+(define (multi-vector-ref mv indices)
+  (vector-ref (cadr mv) (position-in-vector (car mv) indices)))
+
+(define m (make-multi-vector '(3 3 2 2) 1))
+(display "(multi-vector-ref m '(0 0 0)) -> ")
+(multi-vector-ref m '(0 0 0))
+
+;------------------------
+
+(define (multi-vector-set! mv indices x)
+  (vector-set! (cadr mv) (position-in-vector (car mv) indices) x))
+
+
+(multi-vector-set! m '(1 2 1 1) 'X)
+(multi-vector-set! m '(2 1 1 1) 'Y)
+(display "(multi-vector-ref m '(1 2 1 1)) -> ")
+(multi-vector-ref m '(1 2 1 1))
+(display "(multi-vector-ref m '(2 1 1 1)) -> ")
+(multi-vector-ref m '(2 1 1 1))
 
 
 (newline)
