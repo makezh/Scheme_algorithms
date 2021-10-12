@@ -298,9 +298,8 @@
 (define (position-in-vector sizes indices)
   (if (null? (cdr sizes))
       (car sizes)
-      (+ (* (car indices) (apply * (cdr sizes))) (position-in-vector (cdr sizes) (cdr indices)))))
-
-;(position-in-vector '(2 5) '(0 0))
+      (+ (* (car indices) (apply * (cdr sizes)))
+         (position-in-vector (cdr sizes) (cdr indices)))))
 
 ;------------------------
 
@@ -348,4 +347,5 @@
 (display "((o h) 1) -> ")
 ((o h) 1)
 (display "((o) 1) -> ")
-((o) 1)       
+((o) 1)
+
