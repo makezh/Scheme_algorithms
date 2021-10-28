@@ -1,0 +1,6 @@
+(define (zip . xss)
+  (if (or (null? xss)
+          (null? (car xss))) ; Надо отслеживать значение (car xss) здесь...
+      '()
+      (cons (map car xss)
+            (apply zip (map cdr xss)))))
