@@ -25,11 +25,7 @@
 ;--------------------------
 ;#2
 
-(define-syntax test
-  (syntax-rules ()
-    ((test fx x)
-     (list `fx fx x) ; функция (car) -- факт ответ (cadr) -- ожид ответ (caddr)
-     )))
+(load "unit-test.scm")
 
 (define (signum x)
   (cond
@@ -41,41 +37,43 @@
   (list 
    (test (signum -2) -1)
    (test (signum 0) 0)
-   (test (signum 2) 1)))
-
-(define (run-test t)
-  (write (car t))
-  (if (= (cadr t) (caddr t))
-      (begin (display " ok\n") #t)
-      (begin
-        (display " FAIL\n")
-        (display "  Expected: ")
-        (write (caddr t))
-        (newline)
-        (display "  Returned: ")
-        (write (cadr t))
-        (newline)
-        #f)))
-
-(define fl #t)
-(define (run-tests t)
-  (if (null? t)
-      fl
-      (if (run-test (car t))
-          (run-tests (cdr t))
-          (begin (set! fl #f) (run-tests (cdr t)))
-          )))
+   (test (signum 2) 1)
+   (test (signum 100) 1)))
 
 (display "#2\n")
 (run-tests the-tests)
 (newline)
 
 ;--------------------------
+;#3
+
+(define (to-list x)
+  (cond
+    ((string? x) (string->list x))
+    ((vector? x) (vector->list x))
+    ((list? x) x)))
+
+(define (ref x . xs)
+  (cond
+    ((= (length xs) 1)
+     (begin
+       (if (> (car xs) (- (length (to-list x)) 1))
+           #f
+           (list-ref (to-list x) (car xs))
+           )))))
+
+(define 3_tests
+  (list
+   (test (ref '(1 2 3) 1) 2)
+   (test (ref #(1 2 3) 1) 2)
+   (test (ref "123" 1) #\2)
+   (test (ref "123" 3) #f)))
+
+(run-tests 3_tests)
+
+       
+
+
+      
       
 
-
-
-      
-      
-
-  
