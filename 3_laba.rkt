@@ -53,23 +53,50 @@
     ((vector? x) (vector->list x))
     ((list? x) x)))
 
-(define (ref x . xs)
+(define (ref x . xs) ; позиция вставки (car xs) -- элемент вставки (cadr xs)
+  (define (loop i obj pos elem)
+    (if (null? obj)
+        (if (= pos (length (to-list x)))
+            (list elem)
+            (list))
+        (if (= i pos)
+            (append (cons elem (list (car (to-list obj)))) (loop (+ i 1) (cdr (to-list obj)) pos elem))
+            (cons (car (to-list obj)) (loop (+ i 1) (cdr (to-list obj)) pos elem)))))
   (cond
     ((= (length xs) 1)
      (begin
        (if (> (car xs) (- (length (to-list x)) 1))
            #f
            (list-ref (to-list x) (car xs))
-           )))))
+           )))
+    ((= (length xs) 2)
+     (cond
+       ((< (length (to-list x)) (car xs)) #f)
+       ((and (not (char? (cadr xs))) (string? x)) #f)
+       ((string? x) (list->string (loop 0 (to-list x) (car xs) (cadr xs))))
+       ((vector? x) (list->vector (loop 0 (to-list x) (car xs) (cadr xs))))
+       (else (loop 0 x (car xs) (cadr xs)))))))
 
 (define 3_tests
   (list
    (test (ref '(1 2 3) 1) 2)
    (test (ref #(1 2 3) 1) 2)
    (test (ref "123" 1) #\2)
-   (test (ref "123" 3) #f)))
+   (test (ref "123" 3) #f)
+   (test (ref '(1 2 3) 1 0) '(1 0 2 3))
+   (test (ref #(1 2 3) 1 0) #(1 0 2 3))
+   (test (ref #(1 2 3) 1 #\0) #(1 #\0 2 3))
+   (test (ref "123" 1 #\0) "1023")
+   (test (ref "123" 1 0) #f)
+   (test (ref "123" 3 #\4) "1234")
+   (test (ref "123" 5 #\4) #f)
+   ))
 
+(display "#3\n")
 (run-tests 3_tests)
+(newline)
+
+;--------------------------
 
        
 
