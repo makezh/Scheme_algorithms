@@ -65,13 +65,13 @@
   (cond
     ((= (length xs) 1)
      (begin
-       (if (> (car xs) (- (length (to-list x)) 1))
+       (if (or (> (car xs) (- (length (to-list x)) 1)) (< (car xs) 0))
            #f
            (list-ref (to-list x) (car xs))
            )))
     ((= (length xs) 2)
      (cond
-       ((< (length (to-list x)) (car xs)) #f)
+       ((or (< (length (to-list x)) (car xs)) (< (car xs) 0)) #f)
        ((and (not (char? (cadr xs))) (string? x)) #f)
        ((string? x) (list->string (loop 0 (to-list x) (car xs) (cadr xs))))
        ((vector? x) (list->vector (loop 0 (to-list x) (car xs) (cadr xs))))
@@ -83,6 +83,7 @@
    (test (ref #(1 2 3) 1) 2)
    (test (ref "123" 1) #\2)
    (test (ref "123" 3) #f)
+   (test (ref "123" -1) #f)
    (test (ref '(1 2 3) 1 0) '(1 0 2 3))
    (test (ref #(1 2 3) 1 0) #(1 0 2 3))
    (test (ref #(1 2 3) 1 #\0) #(1 #\0 2 3))
@@ -90,6 +91,7 @@
    (test (ref "123" 1 0) #f)
    (test (ref "123" 3 #\4) "1234")
    (test (ref "123" 5 #\4) #f)
+   (test (ref "123" -1 #\4) #f)
    ))
 
 (display "#3\n")
@@ -97,6 +99,8 @@
 (newline)
 
 ;--------------------------
+;#4
+
 
        
 
