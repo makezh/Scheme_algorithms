@@ -62,6 +62,7 @@
         (if (= i pos)
             (append (cons elem (list (car (to-list obj)))) (loop (+ i 1) (cdr (to-list obj)) pos elem))
             (cons (car (to-list obj)) (loop (+ i 1) (cdr (to-list obj)) pos elem)))))
+  
   (cond
     ((= (length xs) 1)
      (begin
@@ -69,6 +70,7 @@
            #f
            (list-ref (to-list x) (car xs))
            )))
+    
     ((= (length xs) 2)
      (cond
        ((or (< (length (to-list x)) (car xs)) (< (car xs) 0)) #f)
@@ -100,6 +102,34 @@
 
 ;--------------------------
 ;#4
+
+(define (factorize example)
+  (define sign (ref example 0))
+  (define pow (ref (ref example 1) 2))
+  (define a (ref (ref example 1) 1))
+  (define b (ref (ref example 2) 1))
+  (if (equal? pow 2)
+      (if (equal? sign '-)
+          `(* (- ,a ,b) (+ ,a ,b))
+          #f)
+      (if (equal? sign '-)
+          `(* (- ,a ,b) (+ (expt ,a 2) (* ,a ,b) (expt ,b 2)))
+          `(* (+ ,a ,b) (+ (expt ,a 2) (- (* ,a ,b)) (expt ,b 2))))))
+
+(define 4_tests
+  (list
+   (test (factorize '(- (expt x 2) (expt y 2))) '(* (- x y) (+ x y)))
+   (test (factorize '(- (expt (+ first 1) 2) (expt (- second 1) 2))) '(* (- (+ first 1) (- second 1)) (+ (+ first 1) (- second 1))))
+   (test (eval (list (list 'lambda 
+                      '(x y) 
+                      (factorize '(- (expt x 2) (expt y 2))))
+                1 2)
+          (interaction-environment)) -3)))
+
+(display "#4\n")
+(run-tests 4_tests)
+(newline)
+
 
 
        
