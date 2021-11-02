@@ -1,7 +1,7 @@
 ;#1
 (define-syntax trace-ex 
   (syntax-rules () 
-    ((trace-ex x) 
+    ((_ x) 
      (let ((res x)) 
        (begin 
          (write 'x) 

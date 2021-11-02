@@ -1,6 +1,6 @@
 (define-syntax test
   (syntax-rules ()
-    ((test fx x)
+    ((_ fx x)
      (list `fx fx x) ; функция (car) -- факт ответ (cadr) -- ожид ответ (caddr)
      )))
 
