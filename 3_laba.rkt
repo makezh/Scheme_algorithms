@@ -63,11 +63,11 @@
   (list
     (test (/ 10 5) 2)
     (test (/ 30 6) 6)
-    ;(test (/ 1 0) 100500)
+    (test (/ 1 0) 100500)
     (test (/ 1 3) 1/3)))
 
 
-(run-tests tests-div)
+;(run-tests tests-div)
 (newline)
 ;--------------------------
 ;#3
