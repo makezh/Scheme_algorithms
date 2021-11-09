@@ -1,5 +1,5 @@
 (define-syntax test
-  (syntax-rules (list)
+  (syntax-rules ()
     ((_ fx ans)
      (begin
        (let
