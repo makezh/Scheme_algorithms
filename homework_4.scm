@@ -45,10 +45,6 @@
 (define (naturals n)
   (lazy-cons n (naturals (+ n 1))))
 
-;test of natural numbers
-(display "Naturals:\n")
-(display (lazy-head (naturals 10) 12)) (newline)
-
 (define (factorials)
   (let loop ((p 1) (n 1))
     (lazy-cons (* p n) (loop (* p n) (+ n 1)))))
@@ -56,6 +52,10 @@
 (define (lazy-factorial n)
   (list-ref (lazy-head (factorials) n)
             (- n 1)))
+
+;test of natural numbers
+(display "Naturals:\n")
+(display (lazy-head (naturals 10) 12)) (newline)
 
 ;test of lazy-factorial
 (display "\nFactorial:\n")
