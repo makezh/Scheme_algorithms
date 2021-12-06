@@ -23,5 +23,46 @@
 (run-tests fact-tests)
 (newline)
 
+;#2
+(display "#2\n")
+
+(define-syntax lazy-cons
+  (syntax-rules ()
+    ((lazy-cons a b)
+     (cons a (delay b)))))
+
+(define (lazy-car p)
+  (car p))
+
+(define (lazy-cdr p)
+  (force (cdr p)))
+
+(define (lazy-head xs k)
+  (if (= k 0)
+      (list)
+      (cons (lazy-car xs) (lazy-head (lazy-cdr xs) (- k 1)))))
+
+(define (naturals n)
+  (lazy-cons n (naturals (+ n 1))))
+
+;test of natural numbers
+(display "Naturals:\n")
+(display (lazy-head (naturals 10) 12)) (newline)
+
+(define (factorials)
+  (let loop ((p 1) (n 1))
+    (lazy-cons (* p n) (loop (* p n) (+ n 1)))))
+
+(define (lazy-factorial n)
+  (list-ref (lazy-head (factorials) n)
+            (- n 1)))
+
+;test of lazy-factorial
+(display "\nFactorial:\n")
+(begin
+  (display (lazy-factorial 10)) (newline)
+  (display (lazy-factorial 50)) (newline))
+
+
 
 
