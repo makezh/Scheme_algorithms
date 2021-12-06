@@ -1,11 +1,87 @@
+(load "unit-test.scm")
 ;#1
-(define fact
+(display "#1\n")
+(define memoized-factorial
   (let loop ((memo '()))
-    (lambda (n)
-      (if (<= n 1) n
-          (let ((memo-val (assoc n memo)))
+    (lambda (x)
+      (if (<= x 1)
+          1
+          (let ((memo-val (assoc x memo)))
             (if memo-val
-                (cadr memo-val)
-                (let ((res (* n (fact (- n 1)))))
-                  (set! memo (cons (list n res) memo))
+                  (cadr memo-val)
+                (let ((res (* x (memoized-factorial (- x 1)))))
+                  (set! memo (cons (list x res) memo))
                   res)))))))
+
+(define fact-tests
+  (list
+   (test (memoized-factorial 4) 24)
+   (test (memoized-factorial 0) 1)
+   (test (memoized-factorial 3) 6)
+   (test (memoized-factorial 5) 120)
+   (test (memoized-factorial 1) 1)))
+(run-tests fact-tests)
+
+;#2
+(display "\n#2\n")
+
+(define-syntax lazy-cons
+  (syntax-rules ()
+    ((lazy-cons a b)
+     (cons a (delay b)))))
+
+(define (lazy-car p)
+  (car p))
+
+(define (lazy-cdr p)
+  (force (cdr p)))
+
+(define (lazy-head xs k)
+  (if (= k 0)
+      (list)
+      (cons (lazy-car xs) (lazy-head (lazy-cdr xs) (- k 1)))))
+
+(define (naturals n)
+  (lazy-cons n (naturals (+ n 1))))
+
+(define (factorials)
+  (let loop ((p 1) (n 1))
+    (lazy-cons (* p n) (loop (* p n) (+ n 1)))))
+
+(define (lazy-factorial n)
+  (list-ref (lazy-head (factorials) n)
+            (- n 1)))
+
+;test of natural numbers
+(display "Naturals:\n")
+(display (lazy-head (naturals 10) 12)) (newline)
+
+;test of lazy-factorial
+(display "\nFactorial:\n")
+(begin
+  (display (lazy-factorial 10)) (newline)
+  (display (lazy-factorial 50)) (newline))
+
+;#3
+(display "\n#3\n")
+
+(define (read-words)
+  (let loop ((words '()) (word ""))
+    (if (eof-object? (peek-char))
+        (reverse (if (> (string-length word) 0)
+                     (cons word words)
+                     words))
+        (let ((char (read-char)))
+          (if (or (equal? char #\space)
+                  (equal? char #\newline)
+                  (equal? char #\tab))
+              (if (> (string-length word) 0)
+                  (loop (cons word words) "")
+                  (loop words ""))
+              (loop words (string-append word (string char))))))))
+
+;#4
+
+
+
+
