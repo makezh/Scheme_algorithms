@@ -1,5 +1,9 @@
 (load "unit-test.scm")
 (define ie (interaction-environment))
+(define (str<->symb s)
+  (if (symbol? s)
+      (symbol->string s)
+      (string->symbol s)))
 
 ;#1
 (display "#1\n")
@@ -87,11 +91,6 @@
 ;#4
 (display "\n#4\n")
 
-(define (str<->symb s)
-  (if (symbol? s)
-      (symbol->string s)
-      (string->symbol s)))
-
 (define-syntax define-struct
   (syntax-rules ()
     ((define-struct name (field1 ...))
@@ -137,3 +136,68 @@
 
 (run-tests struct-tests2)
 
+;#5
+(display "\n#5\n")
+
+(define-syntax define-data
+  (syntax-rules ()
+    ((_ data-name ((name field1 ...) ...))
+     (begin
+       (eval (list 'define
+                      'name
+                      (lambda (field1 ...)
+                        (list (list 'd-name 'data-name) (list 't-name 'name)
+                              (list 'field1 field1) ...))) ie) ...
+       (eval (list 'define
+                      (str<->symb (string-append (str<->symb 'data-name) "?"))
+                      (lambda (x)
+                        (and (list? x) (>= (length x) 2)
+                             (let ((data-res (assoc 'd-name x)))
+                               (and data-res (equal? (cadr data-res) 'data-name)))))) ie)))))
+
+(define-syntax match
+  (syntax-rules ()
+    ((_ x ((name field1 ...) expr) ...)
+       (cond
+         ((equal? (cadadr x) 'name)
+           (let ((field1 (cadr (assoc 'field1 x))) ...)
+             expr))
+          ...
+          (else x)))))
+
+
+; Определяем тип
+;
+(define-data figure ((square a)
+                     (rectangle a b)
+                     (triangle a b c)
+                     (circle r)))
+
+; Определяем значения типа
+;
+(define s (square 10))
+(define r (rectangle 10 20))
+(define t (triangle 10 20 30))
+(define c (circle 10))
+
+; Пусть определение алгебраического типа вводит
+; не только конструкторы, но и предикат этого типа:
+;
+(display (and (figure? s)
+              (figure? r)
+              (figure? t)
+              (figure? c))) (newline)
+
+(define pi (acos -1)) ; Для окружности
+  
+(define (perim f)
+  (match f 
+    ((square a)       (* 4 a))
+    ((rectangle a b)  (* 2 (+ a b)))
+    ((triangle a b c) (+ a b c))
+    ((circle r)       (* 2 pi r))))
+  
+(display (perim s)) (newline)
+(display (perim r)) (newline)
+(display (perim t)) (newline)
+(display (perim c)) (newline)
