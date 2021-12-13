@@ -11,7 +11,7 @@
       index
       (word-index word program (+ index 1))))
 
-(define (action-helper aliases action stack)
+(define (action-helper aliases action stack) ; (5 6 +) -> (11)
   (let ((aliased-action (assoc action aliases)))
     (if aliased-action
         (let ((aliased-action (cadr aliased-action)))
@@ -20,11 +20,11 @@
                       (list (caddr aliased-action) (list 'quote stack))) ie))
         (eval (list action (cadr stack) (car stack)) ie))))
 
-(define (math_act action stack)
+(define (math_act action stack) ; математические вычисления
   (define aliases (list (list 'mod '(remainder cadr car))))
   (cons (action-helper aliases action stack) (cddr stack)))
 
-(define (logic_act action stack)
+(define (logic_act action stack) ; логические сравнения
   (cons (if (action-helper '() action stack) -1 0) (cddr stack)))
 
 (define (interpret program init-stack)
