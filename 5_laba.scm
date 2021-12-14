@@ -54,7 +54,7 @@
                                     (interpreter (+ (word-index 'wend program index) 1) (cdr stack) return-stack definitions)
                                     (interpreter (+ index 1) (cdr stack) (cons index return-stack) definitions)))
           ((equal? word 'wend) (interpreter (car return-stack) stack (cdr return-stack) definitions))
-          ((equal? word 'do) (interpreter (+ index 1) stack (cons index return-stack) definitions))
+          ((equal? word 'repeat) (interpreter (+ index 1) stack (cons index return-stack) definitions))
           ((equal? word 'until) (interpreter (if (zero? (car stack)) (+ index 1) (car return-stack)) stack (cdr return-stack) definitions))
           ;((equal? word 'for) (if (<= (car stack) (cadr stack))
                                   ;(interpreter (+ index 1) stack (cons index return-stack) definitions)
@@ -140,6 +140,9 @@
                wend
                drop
              end
-             5 power2 3 power2 power2) '()) '(256 32))))
+             5 power2 3 power2 power2) '()) '(256 32))
+   (test (interpret #(1 swap repeat dup rot * swap 1 - until drop) '(5)) '(120))
+   (test (interpret #(1 swap repeat dup rot * swap 1 - until drop) '(3)) '(6))
+   ))
 
 (run-tests inter-tests)
