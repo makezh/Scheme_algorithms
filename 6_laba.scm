@@ -116,8 +116,6 @@
    (test (scan-many-fracs "111/1233 11/222 -2/23") '(111/1233 11/222 -2/23))
    (test (scan-many-fracs "\t1/2 1/3\n\n10/8") '(1/2 1/3 5/4))
    (test (scan-many-fracs "\t1/2 1/3\n\n2/-5") #f)))
-;(run-tests tests)
 
-;(scan-many-fracs "\t1/2 1/3\n\n10/8")  
-(scan-many-fracs
- "\t1/2 1/3\n\n2/-5")  
+(run-tests tests)
+
