@@ -119,3 +119,135 @@
 
 (run-tests tests)
 
+
+
+;#2
+
+(define force-return 0)
+(define (exit reason) (force-return #f))
+
+(define (find-tail xs x) ;список после элемента
+  (if (equal? (car xs) x)
+      (cdr xs)
+      (find-tail (cdr xs) x)))
+
+(define (push xs x) ;добавление в конец списка
+  (append xs (list x)))
+
+(define (find-head xs x) ;список до элемента
+  (let loop ((xs xs) (tmp '()))
+    (if (null? xs)
+        #f
+        (if (equal? (car xs) x)
+            tmp
+            (loop (cdr xs) (push tmp (car xs)))))))
+
+
+(define (tail-endif program)
+  (let loop ((program program) (depth -1)) ;программа -- глубина IFов
+    (if (null? program)
+        #f
+        (let ((word (car program)))
+          (cond
+            ((and (equal? word 'endif) (zero? depth)) (cdr program))
+            ((equal? word 'endif) (loop (cdr program) (- depth 1)))
+            ((equal? word 'if) (loop (cdr program) (+ depth 1)))
+            (else (loop (cdr program) depth)))))))
+
+(define (head xs n) ;элементы до n-го включительно
+  (if (or (< n 0) (null? xs))
+      '()
+      (cons (car xs) (head (cdr xs) (- n 1)))))
+
+(define (parse-body program)
+  (let loop ((program program) (parsed '()) (stack '())) ; программа -- обработанные выражения -- в процессе обработки
+    (if (not (null? program))
+        (let ((word (car program)))
+          (cond
+            ((equal? word 'if)
+             (let ((tail (tail-endif program)))
+               (if tail
+                   (loop tail (push parsed (list 'if (loop (cdr program) '() (cons 'if stack)))) stack) ;если хвоста нет, то заключаем выражения в IF в скобки
+                   (exit "1 BODY")))) 
+            ((equal? word 'endif)
+             (if (and (not (null? stack)) (equal? (car stack) 'if)) 
+                 parsed 
+                 (exit "2 BODY")))
+            ((member word '(define end)) (exit "3 BODY"))
+            (else (loop (cdr program) (push parsed word) stack)))) ;добавляем в конец списка элементы программы
+        parsed)))
+
+(define (parse-articles program)
+  (let loop ((program program))
+    (if (not (null? program))
+        (let ((word (car program)) (other (cdr program)))
+          (if (equal? word 'define)
+              (if (null? other) (exit "1 ART")
+                  (if (member (car other) '(if endif)) (exit "2 ART")
+                      (let ((infunc (find-head (cdr other) 'end))) ;все, что внутри функции
+                        (if (not infunc) (exit "3 ART")
+                            (cons (cons (car other) (list (parse-body infunc))) ; парсинг внутри функции и соединение с хвостом
+                                  (loop (find-tail (cdr other) 'end)))))))
+              (list program)))
+        (list program))))
+
+(define (parse program)
+  (call/cc
+   (lambda (stack)
+     (set! force-return stack)
+     (let ((program (vector->list program)))
+       (if (equal? (car program) 'define)
+           (let ((articles (parse-articles program)))
+             (cons (head articles (- (length articles) 2)) ;соединяем запарсенное в функции с оставшимся
+                   (list (parse-body (last articles)))))
+           (cons '() (list (parse-body program))))))))
+
+(newline)
+
+(define tests#2 (list
+                 (test (parse #(1 2 +)) '(() (1 2 +)))
+                 (test (parse #(x dup 0 swap if drop -1 endif)) '(() (x dup 0 swap (if (drop -1)))))
+                 (test (parse #( define -- 1 - end
+                                  define =0? dup 0 = end
+                                  define =1? dup 1 = end
+                                  define factorial
+                                  =0? if drop 1 exit endif
+                                  =1? if drop 1 exit endif
+                                  dup --
+                                  factorial
+                                  *
+                                  end
+                                  0 factorial
+                                  1 factorial
+                                  2 factorial
+                                  3 factorial
+                                  4 factorial )) '(((-- (1 -))
+                                                    (=0? (dup 0 =))
+                                                    (=1? (dup 1 =))
+                                                    (factorial
+                                                     (=0? (if (drop 1 exit)) =1? (if (drop 1 exit)) dup -- factorial *)))
+                                                   (0 factorial 1 factorial 2 factorial 3 factorial 4 factorial)))
+                 (test (parse #(if 1 2 endif if 3 4)) #f)
+                 (test (parse #(define word w1 w2 w3)) #f)
+                 (test (parse #(define =0? dup 0 = end 
+                                 define <0? dup 0 < end 
+                                 define signum 
+                                 =0? if exit endif 
+                                 <0? if drop -1 exit endif 
+                                 drop 
+                                 1 
+                                 end 
+                                 0 signum 
+                                 -2 signum )) '(((=0? (dup 0 =)) (<0? (dup 0 <)) (signum (=0? (if (exit)) <0? (if (drop -1 exit)) drop 1))) (0 signum -2 signum)))
+                 (test (parse #(1 2 if + if dup - endif endif dup)) '(() (1 2 (if (+ (if (dup -)))) dup)))
+                 (test (parse #(define abs 
+                                 dup 0 < 
+                                 if neg endif 
+                                 end 
+                                 9 abs 
+                                 -9 abs)) '(((abs (dup 0 < (if (neg))))) (9 abs -9 abs)))
+                 (test (parse #(display if end endif)) #f)
+                 (test (parse #(if define if endif)) #f)
+                 ))
+
+(run-tests tests#2)
