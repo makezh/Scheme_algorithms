@@ -90,12 +90,13 @@ main()
 	ERRORS_FILE="errors_$START.log"
 
 	while [ 0 -eq 0 ]; do
-		if ! ps -p $PID > /dev/null 2>&1; then
+		if ! ps -p $PID > /dev/null 2>&1
+		then
 			bash $PATHY 1>>$LOGS_FILE 2>>$ERRORS_FILE & 
 			PID=$!
 			echo "Pid: $PID"
 		else
-			echo "Процесс не завершен, повторный запуск не произведен"
+			echo "Почему закончилось?"
 		fi
 		sleep $TIMEE
 	done
