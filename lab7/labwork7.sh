@@ -46,8 +46,8 @@ args()
 				then
 					error "Нет времени задержки."
 				fi
-				TIMEE=$1
-				if ! number? $TIMEE
+				TIME_=$1
+				if ! number? $TIME_
 				then
 					error "Время задержки - число. Не иначе."
 				fi
@@ -59,8 +59,8 @@ args()
 				then
 					error "Нет пути исполняемого скрипта."
 				fi
-				PATHY=$1
-				if ! [ -f $PATHY ]
+				PATH_=$1
+				if ! [ -f $PATH_ ]
 				then
 					error "Исполняемый скрипт - файл. Не иначе."
 				fi
@@ -71,12 +71,12 @@ args()
 		esac
 	done
 
-	if [ -z $TIMEE ]
+	if [ -z $TIME_ ]
 	then
 		error "Ну как бы времемени-то нет."
 	fi
 
-	if [ -z $PATHY ]
+	if [ -z $PATH_ ]
 	then
 		error "Ну как бы пути-то нет."
 	fi
@@ -86,19 +86,19 @@ main()
 {
 	PID=-1
 	START=`date +%s`
-	LOGS_FILE="output_$START.log"
+	LOGS_FILE="output_$START.log" # формируем ЛОГ-файлы для вывода и ошибок
 	ERRORS_FILE="errors_$START.log"
 
 	while [ 0 -eq 0 ]; do
 		if ! ps -p $PID > /dev/null 2>&1
 		then
-			bash $PATHY 1>>$LOGS_FILE 2>>$ERRORS_FILE & 
+			bash $PATH_ 1>>$LOGS_FILE 2>>$ERRORS_FILE & 
 			PID=$!
 			echo "Pid: $PID"
 		else
 			echo "Почему закончилось?"
 		fi
-		sleep $TIMEE
+		sleep $TIME_
 	done
 }
 
