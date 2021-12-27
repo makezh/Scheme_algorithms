@@ -47,8 +47,8 @@ args()
 				then
 					error "Нет времени задержки."
 				fi
-				TIME_=$1
-				if ! number? $TIME_
+				DELAY=$1
+				if ! number? $DELAY
 				then
 					error "Время задержки - число. Не иначе."
 				fi
@@ -72,7 +72,7 @@ args()
 		esac
 	done
 
-	if [ -z $TIME_ ]
+	if [ -z $DELAY ]
 	then
 		error "Ну как бы времемени-то нет."
 	fi
@@ -85,12 +85,12 @@ args()
 
 main()
 {
-	PID=-1
+	PID=-1 #идентификатор процесса
 	START=`date +%s`
 	LOGS_FILE="output_$START.log" # формируем ЛОГ-файл для вывода
 	ERRORS_FILE="errors_$START.log" # формируем ЛОГ-файл для ошибок
 
-	while [ 0 -eq 0 ]
+	while true
 	do
 		if ! ps -p $PID > /dev/null 2>&1 #вывод всех Пидов в небытие. stderr в stdout
 		then
@@ -100,7 +100,7 @@ main()
 		else
 			echo "Почему закончилось?"
 		fi
-		sleep $TIME_
+		sleep $DELAY
 	done
 }
 
