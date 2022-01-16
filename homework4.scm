@@ -33,19 +33,31 @@
 
 (define-syntax lazy-cons
   (syntax-rules ()
-    ((lazy-cons a b)
-     (cons a (delay b)))))
+    ((lazy-cons head tail)
+     (cons head (delay tail)))))
 
 (define (lazy-car p)
-  (car p))
+  (if (pair? p)
+  (car p)
+  p))
 
 (define (lazy-cdr p)
-  (force (cdr p)))
+  (if (pair? p)
+  (force (cdr p))))
 
 (define (lazy-head xs k)
   (if (= k 0)
       (list)
       (cons (lazy-car xs) (lazy-head (lazy-cdr xs) (- k 1)))))
+
+(define (lazy-ref xs n)
+  (if (= n 0)
+      (lazy-car xs)
+      (lazy-ref (lazy-cdr xs) (- n 1))))
+
+
+(lazy-ref '(1 2 3 4) 0)
+  
 
 (define (naturals n)
   (lazy-cons n (naturals (+ n 1))))
@@ -70,7 +82,6 @@
 
 ;#3
 (display "\n#3\n")
-(display "load the file...\n")
 
 (define (read-words)
   (let loop ((words '()) (word ""))

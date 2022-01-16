@@ -23,7 +23,7 @@
         (eval (list action (cadr stack) (car stack)) ie))))
 
 (define (math_act action stack) ; математические вычисления
-  (define aliases (list (list 'mod '(remainder cadr car))))
+  (define aliases (list (list 'mod '(remainder cadr car)) (list '/ '(quotient cadr car))))
   (cons (action-execute aliases action stack) (cddr stack)))
 
 (define (logic_act action stack) ; логические сравнения
@@ -38,10 +38,10 @@
             ((number? word) (interpreter (+ index 1) (cons word stack) return-stack definitions))
             ((member? signs word) (interpreter (+ index 1) (math_act word stack) return-stack definitions))
             ((member? logic word) (interpreter (+ index 1) (logic_act word stack) return-stack definitions))
-            ((equal? word 'not) (interpreter (+ index 1) (cons (if (= (car stack) -1) 0 -1) (cdr stack)) return-stack definitions))
+            ((equal? word 'not) (interpreter (+ index 1) (cons (if (not (= (car stack) 0)) 0 -1) (cdr stack)) return-stack definitions))
             ((equal? word 'neg) (interpreter (+ index 1) (cons (- (car stack)) (cdr stack)) return-stack definitions))
-            ((equal? word 'and) (interpreter (+ index 1) (cons (if (and (= (car stack) -1) (= (cdr stack) -1)) -1 0) (cddr stack)) return-stack definitions))
-            ((equal? word 'or) (interpreter (+ index 1) (cons (if (or (= (car stack) -1) (= (cdr stack) -1)) -1 0) (cddr stack)) return-stack definitions))
+            ((equal? word 'and) (interpreter (+ index 1) (cons (if (or (= (car stack) 0) (= (cadr stack) 0)) 0 -1) (cddr stack)) return-stack definitions))
+            ((equal? word 'or) (interpreter (+ index 1) (cons (if (and (= (car stack) 0) (= (cadr stack) 0)) 0 -1) (cddr stack)) return-stack definitions))
             ((equal? word 'drop) (interpreter (+ index 1) (cdr stack) return-stack definitions))
             ((equal? word 'swap) (interpreter (+ index 1) (append (list (cadr stack) (car stack)) (cddr stack)) return-stack definitions))
             ((equal? word 'dup) (interpreter (+ index 1) (cons (car stack) stack) return-stack definitions))
@@ -63,8 +63,9 @@
                                       (interpreter (+ index 1) (cdr stack) (cons index return-stack) definitions)))
             ((equal? word 'wend) (interpreter (car return-stack) stack (cdr return-stack) definitions))
             ((equal? word 'repeat) (interpreter (+ index 1) stack (cons index return-stack) definitions))
-            ((equal? word 'until) (interpreter (if (zero? (car stack)) (+ index 1) (car return-stack)) stack (cdr return-stack) definitions))
+            ((equal? word 'until) (interpreter (if (zero? (car stack)) (car return-stack) (+ index 1)) (cdr stack) (cdr return-stack) definitions))
             (else (interpreter (cadr (assoc word definitions)) stack (cons (+ index 1) return-stack) definitions)))))))
+
 
 
 ;ТЕСТЫ
@@ -131,16 +132,16 @@
                           234 8100 gcd    ) '()) '(18 9))
    ))
 
-(run-tests inter-tests)
-(newline)
+;;(run-tests inter-tests)
+;;(newline)
 
 (define feature-if-else
   (list
    (test (interpret #(1 if 100 else 200 endif) '()) '(100))
    (test (interpret #(0 if 100 else 200 endif) '()) '(200))))
 
-(run-tests feature-if-else)
-(newline)
+;;(run-tests feature-if-else)
+;;(newline)
 
 (define feature-while-loop
   (list
@@ -161,8 +162,8 @@
                        end
                        5 power2 3 power2 power2) '()) '(256 32))))
 
-(run-tests feature-while-loop)
-(newline)
+;;(run-tests feature-while-loop)
+;;(newline)
 
 
 (define feature-repeat-loop
@@ -170,5 +171,5 @@
    (test (interpret #(1 swap repeat dup rot * swap 1 - until drop) '(5)) '(120))
    (test (interpret #(1 swap repeat dup rot * swap 1 - until drop) '(3)) '(6))))
 
-(run-tests feature-repeat-loop)
-(newline)
+;;(run-tests feature-repeat-loop)
+;;(newline)

@@ -72,31 +72,32 @@ args()
 		esac
 	done
 
-	if [ -z $DELAY ]
-	then
-		error "Ну как бы времемени-то нет."
-	fi
-
 	if [ -z $PATH_ ]
 	then
-		error "Ну как бы пути-то нет."
+		error "Ну как бы пути нет."
+	fi
+
+	if [ -z $DELAY ]
+	then
+		error "Ну как бы времемени нет."
 	fi
 }
 
 main()
 {
-	PID=-1 #идентификатор процесса
-	START=`date +%s`
-	LOGS_FILE="output_$START.log" # формируем ЛОГ-файл для вывода
+	PID=-1 # идентификатор процесса
+	START=`date +%s` # время запуска программы
+
+	OUTPUT_FILES="output_$START.log" # формируем ЛОГ-файл для вывода
 	ERRORS_FILE="errors_$START.log" # формируем ЛОГ-файл для ошибок
 
 	while true
 	do
-		if ! ps -p $PID > /dev/null 2>&1 #вывод всех Пидов в небытие. stderr в stdout
+		if ! ps -p $PID > /dev/null 2>&1 #stderr в stdout
 		then
-			bash $PATH_ 1>>$LOGS_FILE 2>>$ERRORS_FILE & 
-			PID=$! #идентификатор процесса последнего задания
-			echo "Pid: $PID"
+			bash $PATH_ 1>>$OUTPUT_FILES 2>>$ERRORS_FILE & 
+			PID=$! # присваиваем идентификатору номер последнего процесса
+			echo "Pid: $PID " "time: " `date +%s` # номер процесса -- время выполнения
 		else
 			echo "Почему закончилось?"
 		fi
